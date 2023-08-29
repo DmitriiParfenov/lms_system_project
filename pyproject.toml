@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "lms-system-project"
+version = "0.1.0"
+description = "The project is a cource administration software application where anyone can post their useful materials or courses"
+authors = ["Dmitrii <dima12sik@yandex.ru>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+django = "^4.2.4"
+djangorestframework = "^3.14.0"
+pillow = "^10.0.0"
+psycopg2-binary = "^2.9.7"
+pytils = "^0.4.1"
+redis = "^5.0.0"
+python-dotenv = "^1.0.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
