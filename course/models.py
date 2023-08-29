@@ -8,6 +8,7 @@ class Course(models.Model):
     title = models.CharField(max_length=150, verbose_name='название')
     picture = models.ImageField(upload_to='courses/', verbose_name='превью', **NULLABLE)
     description = models.TextField(max_length=1000, verbose_name='описание')
+    lesson = models.ManyToManyField('lesson.Lesson', verbose_name='урок_курса')
 
     def __str__(self):
         return self.title
