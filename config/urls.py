@@ -23,5 +23,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('lesson/', include('lesson.urls', namespace='lesson')),
     path('courses/', include('course.urls', namespace='course')),
-    path('user/', include('users.urls', namespace='user'))
+    path('user/', include('users.urls', namespace='user')),
+    path('payment/', include('payments.urls', namespace='payment'))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
