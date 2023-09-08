@@ -77,6 +77,11 @@ CREATE DATABASE lms_system_project;
 - В директории `lms_system_project` создайте файл `.env`. Пример содержимого файла:
 ```
 password=пароль для пользователя postgresql
+
+EMAIL_BACKEND=путь импорта Python для вашего класса бэкенда
+EMAIL_HOST=хост SMTP
+EMAIL_HOST_USER=адрес электронной почты для аутентификации на почтовом сервере
+EMAIL_HOST_PASSWORD=пароль для аутентификации на почтовом сервере
 ```
 # Работа с миграциями
 
