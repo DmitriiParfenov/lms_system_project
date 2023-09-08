@@ -8,7 +8,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'first_name', 'last_name', 'email', 'phone', 'city', 'payments')
+        fields = ('id', 'first_name', 'last_name', 'email', 'phone', 'city', 'payments', 'is_active')
 
     def get_payments(self, instance):
         return instance.payment_set.all().select_related('is_course_paid', 'is_lesson_paid').values(
@@ -23,4 +23,10 @@ class UserSerializer(serializers.ModelSerializer):
 class UserSerializerForPayment(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'first_name', 'last_name', 'email', 'phone', 'city')
+        fields = ('id', 'first_name', 'email', 'phone', 'city')
+
+
+class UserUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name', 'phone', 'city', 'avatar',)

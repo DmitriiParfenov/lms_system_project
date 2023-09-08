@@ -9,6 +9,7 @@ class Course(models.Model):
     picture = models.ImageField(upload_to='courses/', verbose_name='превью', **NULLABLE)
     description = models.TextField(max_length=1000, verbose_name='описание')
     lesson = models.ManyToManyField('lesson.Lesson', verbose_name='урок_курса')
+    user_course = models.ForeignKey('users.User', on_delete=models.CASCADE, verbose_name='создатель', **NULLABLE)
 
     def __str__(self):
         return self.title
