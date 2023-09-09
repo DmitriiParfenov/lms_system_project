@@ -85,7 +85,7 @@ EMAIL_HOST_PASSWORD=пароль для аутентификации на поч
 ```
 # Работа с миграциями
 
-Из директории `sender_project` выполните в консоли: </br>
+Из директории `lms_system_project` выполните в консоли: </br>
 
 ```
 python manage.py migrate
