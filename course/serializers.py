@@ -1,10 +1,11 @@
 from rest_framework import serializers
 
-from course.models import Course
+from course.models import Course, Subscription
 
 from lesson.models import Lesson
 from lesson.serializers import LessonSerializer
 from users.models import User
+from users.serializers import UserSerializerForPayment
 
 
 class CourseSerializer(serializers.ModelSerializer):
@@ -16,10 +17,14 @@ class CourseSerializer(serializers.ModelSerializer):
     lesson = LessonSerializer(many=True)
     count_lesson = serializers.SerializerMethodField()
     user_course = serializers.SlugRelatedField(slug_field='email', queryset=User.objects.all())
+    subscription = serializers.SerializerMethodField()
 
     class Meta:
         model = Course
-        fields = ('id', 'title', 'description', 'count_lesson', 'lesson', 'user_course')
+        fields = ('id', 'title', 'description', 'count_lesson', 'lesson', 'user_course', 'subscription')
+
+    def get_subscription(self, instance):
+        return instance.material.filter(user=instance.user_course).exists()
 
     def create(self, validated_data):
         """Метод создает объект модели Course с указанием полей для вложенного объекта модели Lesson. Если текущего
@@ -88,3 +93,20 @@ class CourseSerializerByLessonId(serializers.ModelSerializer):
     class Meta:
         model = Course
         fields = ('title', 'description', 'lesson',)
+
+
+class SubscriptionSerializer(serializers.ModelSerializer):
+    course = serializers.SlugRelatedField(slug_field='title', queryset=Course.objects.all())
+    user = UserSerializerForPayment(read_only=True)
+
+    class Meta:
+        model = Subscription
+        fields = ('user', 'course')
+
+
+class SubscriptionUnsubscribeSerializer(serializers.ModelSerializer):
+    user = UserSerializerForPayment(read_only=True)
+
+    class Meta:
+        model = Subscription
+        fields = ('user',)

@@ -26,9 +26,13 @@ class IsOwnerOrIsAuthenticatedOrModerator(BasePermission):
         elif request.method in ('PATCH', 'PUT'):
             if request.user.has_perm('lesson.change_lesson'):
                 return True
+            elif not request.user.is_authenticated:
+                return False
             return request.user == obj.user_lesson
         elif request.method == 'POST':
             return request.user.is_authenticated and not request.user.groups.filter(name="Moderator").exists()
         elif request.method == 'DELETE':
+            if not request.user.is_authenticated:
+                return False
             return request.user == obj.user_lesson or request.user.is_superuser
         return False

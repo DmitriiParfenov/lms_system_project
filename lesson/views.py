@@ -2,6 +2,7 @@ from django.shortcuts import render
 from rest_framework import generics
 from rest_framework.generics import get_object_or_404
 
+from course.pagination import Pagination
 from lesson.models import Lesson
 from lesson.permissions import IsOwnerOrIsAuthenticatedOrModerator
 from lesson.serializers import LessonSerializer, LessonListSerializer
@@ -9,7 +10,7 @@ from lesson.serializers import LessonSerializer, LessonListSerializer
 
 # Create your views here.
 class LessonCreateAPIView(generics.CreateAPIView):
-    """Для создание объектов модели Lesson."""
+    """Для создания объектов модели Lesson."""
 
     serializer_class = LessonSerializer
     permission_classes = (IsOwnerOrIsAuthenticatedOrModerator,)
@@ -25,6 +26,7 @@ class LessonListAPIView(generics.ListAPIView):
 
     serializer_class = LessonListSerializer
     permission_classes = (IsOwnerOrIsAuthenticatedOrModerator,)
+    pagination_class = Pagination
 
     def get_queryset(self):
         """

@@ -9,6 +9,7 @@ class IsOwnerOrModerator(BasePermission):
     аутентифицированных пользователей и для тех, кто не входит в группу "Moderator"; г) для DELETE-метода — доступ
     только для владельца записи или суперпользователя.
     """
+
     def has_permission(self, request, view):
         if request.method in SAFE_METHODS:
             if request.user.is_authenticated:
@@ -17,10 +18,26 @@ class IsOwnerOrModerator(BasePermission):
         elif request.method in ('PATCH', 'PUT'):
             if request.user.has_perm('course.change_course'):
                 return True
+            elif not request.user.is_authenticated:
+                return False
             return request.user == view.get_object().user_course
         elif request.method == 'POST':
             return request.user.is_authenticated and not request.user.groups.filter(name="Moderator").exists()
         elif request.method == 'DELETE':
+            if not request.user.is_authenticated:
+                return False
             return request.user == view.get_object().user_course or request.user.is_superuser
         return False
 
+
+class IsOwnerSubscription(BasePermission):
+    def has_permission(self, request, view):
+        if request.method in ('GET', 'HEAD', 'OPTIONS', 'POST'):
+            if request.user.is_authenticated:
+                return True
+            return False
+        elif request.method in ('PATCH', 'PUT'):
+            if not request.user.is_authenticated:
+                return False
+            return request.user == view.get_object().user
+        return False

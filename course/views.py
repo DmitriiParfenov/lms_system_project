@@ -1,8 +1,10 @@
-from rest_framework import viewsets, generics
+from rest_framework import viewsets, generics, serializers
 
-from course.models import Course
-from course.permissions import IsOwnerOrModerator
-from course.serializers import CourseSerializer, CourseSerializerByLessonId
+from course.models import Course, Subscription
+from course.pagination import Pagination
+from course.permissions import IsOwnerOrModerator, IsOwnerSubscription
+from course.serializers import CourseSerializer, CourseSerializerByLessonId, SubscriptionSerializer, \
+    SubscriptionUnsubscribeSerializer
 
 
 # Create your views here.
@@ -11,6 +13,7 @@ class CourseViewSet(viewsets.ModelViewSet):
 
     serializer_class = CourseSerializer
     permission_classes = (IsOwnerOrModerator,)
+    pagination_class = Pagination
 
     def get_queryset(self):
         """
@@ -51,3 +54,34 @@ class CourseCreateAPIViewByLessonId(generics.CreateAPIView):
                 lesson.save()
         owner.user_course = self.request.user
         owner.save()
+
+
+class SubscriptionCreateAPIView(generics.CreateAPIView):
+    serializer_class = SubscriptionSerializer
+    permission_classes = (IsOwnerSubscription,)
+
+    def perform_create(self, serializer):
+        errors = {}
+        for _ in serializer.validated_data:
+            course_title = serializer.validated_data.get('course')
+            user_subscriptions = self.request.user.subscriber.filter(course=course_title.pk)
+            if user_subscriptions:
+                errors['user'] = 'Текущий пользователь уже подписан на данный курс'
+        if errors:
+            raise serializers.ValidationError(errors)
+        new_mat = serializer.save()
+        new_mat.user = self.request.user
+        new_mat.save()
+
+
+class UnsubscribeAPIView(generics.UpdateAPIView):
+    serializer_class = SubscriptionUnsubscribeSerializer
+    permission_classes = (IsOwnerSubscription,)
+
+    def get_queryset(self):
+        return Subscription.objects.filter(user=self.request.user.pk)
+
+    def perform_update(self, serializer):
+        new_mat = serializer.save()
+        new_mat.user = None
+        new_mat.save()
