@@ -22,7 +22,7 @@ class CourseViewSet(viewsets.ModelViewSet):
         """
         if self.request.user.has_perms(['course.view_course']):
             return Course.objects.all()
-        return Course.objects.filter(user_course=self.request.user)
+        return Course.objects.filter(user_course=self.request.user.id)
 
     def perform_create(self, serializer):
         new_obj = serializer.save()
@@ -57,6 +57,7 @@ class CourseCreateAPIViewByLessonId(generics.CreateAPIView):
 
 
 class SubscriptionCreateAPIView(generics.CreateAPIView):
+    """Для создания подписки на указанный курс для текущего авторизованного пользователя."""
     serializer_class = SubscriptionSerializer
     permission_classes = (IsOwnerSubscription,)
 
@@ -75,6 +76,8 @@ class SubscriptionCreateAPIView(generics.CreateAPIView):
 
 
 class UnsubscribeAPIView(generics.UpdateAPIView):
+    """Для отписки от указанного курса для текущего авторизованного пользователя."""
+
     serializer_class = SubscriptionUnsubscribeSerializer
     permission_classes = (IsOwnerSubscription,)
 
