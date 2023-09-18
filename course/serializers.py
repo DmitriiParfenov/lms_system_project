@@ -1,6 +1,9 @@
+import datetime
+
 from rest_framework import serializers
 
 from course.models import Course, Subscription
+from course.tasks import send_email_updated_course
 
 from lesson.models import Lesson
 from lesson.serializers import LessonSerializer
@@ -28,7 +31,7 @@ class CourseSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """Метод создает объект модели Course с указанием полей для вложенного объекта модели Lesson. Если текущего
-        объекта Lesson нет в базе данных то он будет создан."""
+        объекта Lesson нет в базе данных, то он будет создан."""
 
         lesson_data = validated_data.pop('lesson')
         course = Course.objects.create(**validated_data)
@@ -66,6 +69,9 @@ class CourseSerializer(serializers.ModelSerializer):
         instance.title = validated_data.get('title', instance.title)
         instance.picture = validated_data.get('picture', instance.picture)
         instance.description = validated_data.get('description', instance.description)
+        delta = datetime.datetime.utcnow() - instance.changed.replace(tzinfo=None)
+        if delta.total_seconds() >= 14400:
+            send_email_updated_course.delay(instance.pk)
 
         lesson_data = validated_data.get('lesson')
         lesson_object_list = []
