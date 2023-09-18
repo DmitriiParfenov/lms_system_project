@@ -1,5 +1,6 @@
 from datetime import datetime, timezone
 
+from celery import shared_task
 from django.db.models import F
 from django.db.models.functions import ExtractDay
 from django_celery_beat.models import PeriodicTask, CrontabSchedule
@@ -7,6 +8,7 @@ from django_celery_beat.models import PeriodicTask, CrontabSchedule
 from users.models import User
 
 
+@shared_task
 def inactivate_user():
     """Метод инактивирует пользователей, которые не были авторизованы на сайте более 30 дней."""
 
