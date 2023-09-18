@@ -21,6 +21,17 @@ coverage run --sourse='.' manage.py test
 coverage report
 ```
 
+- Для запуска отложенных задач выполните в консоли из директории `lms_system_project`: </br>
+```
+celery -A config worker -l INFO
+```
+
+- Для запуска периодических задач выполните в консоли из директории `lms_system_project`: </br>
+```
+celery -A config worker --loglevel=info
+celery -A config beat --loglevel=info
+```
+
 # Клонирование репозитория
 
 В проекте для управления зависимостями используется [poetry](https://python-poetry.org/). </br>
@@ -89,6 +100,8 @@ EMAIL_HOST_USER=адрес электронной почты для аутент
 EMAIL_HOST_PASSWORD=пароль для аутентификации на почтовом сервере
 
 STRIPE_API_KEY=ключ API для совершения платежей
+
+LOCATION=местоположение используемого кеша (redis)
 ```
 - В проекте для работы с платежами используется [stripe](https://stripe.com/docs/api). </br>
 
