@@ -21,13 +21,13 @@ def inactivate_user():
 
 schedule, _ = CrontabSchedule.objects.get_or_create(
     minute='*',
-    hour='*',
+    hour='15',
     day_of_week='*',
     day_of_month='*',
     month_of_year='*',
 )
 
-PeriodicTask.objects.create(
+PeriodicTask.objects.get_or_create(
     crontab=schedule,
     name='Inactivate users',
     task='users.tasks.inactivate_user',
