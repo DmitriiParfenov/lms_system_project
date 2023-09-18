@@ -10,6 +10,8 @@ class Course(models.Model):
     description = models.TextField(max_length=1000, verbose_name='описание')
     lesson = models.ManyToManyField('lesson.Lesson', verbose_name='урок_курса')
     user_course = models.ForeignKey('users.User', on_delete=models.CASCADE, verbose_name='создатель', **NULLABLE)
+    published = models.DateTimeField(auto_now_add=True, db_index=True, verbose_name='дата добавления')
+    changed = models.DateTimeField(auto_now=True, db_index=True, verbose_name='дата изменения')
 
     def __str__(self):
         return self.title
