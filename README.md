@@ -29,7 +29,7 @@ celery -A config worker -l info
 - Для запуска периодических задач выполните в консоли из директории `lms_system_project`: </br>
 ```
 celery -A config worker -l info
-celery -A config bear -l info -S django
+celery -A config beat -l info -S django
 ```
 
 # Клонирование репозитория
