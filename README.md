@@ -17,7 +17,7 @@ python manage.py cmg
 ```
 - Для просмотра покрытия кода тестами введите в консоли:
 ```
-coverage run --sourse='.' manage.py test
+coverage run --source='.' manage.py test
 coverage report
 ```
 
