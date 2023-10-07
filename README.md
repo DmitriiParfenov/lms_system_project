@@ -90,19 +90,47 @@ CREATE DATABASE lms_system_project;
 ```
 # Работа с переменными окружения
 
-- В директории `lms_system_project` создайте файл `.env`. Пример содержимого файла:
+В директории `lms_system_project` создайте файл `.env`.
+- Пример содержимого файла `.env` для запуска сервиса через docker:
 ```
-password=пароль для пользователя postgresql
+HOST=название текущего хоста — db (из docker-compose)
+NAME=название базы данных — postgres
+USER=имя текущего пользователя — postgres
+PASSWORD=пароль текущего пользователя — ваш пароль
+
+POSTGRES_USER=имя пользователя — postgres
+POSTGRES_PASSWORD=пароль пользователя — ваш пароль 
+POSTGRES_DB=название базы данных для подключения из docker — db (из docker-compose)
 
 EMAIL_BACKEND=путь импорта Python для вашего класса бэкенда
 EMAIL_HOST=хост SMTP
 EMAIL_HOST_USER=адрес электронной почты для аутентификации на почтовом сервере
 EMAIL_HOST_PASSWORD=пароль для аутентификации на почтовом сервере
 
-STRIPE_API_KEY=ключ API для совершения платежей
+STRIPE_API_KEY=API ключ для подключения платежей
 
 LOCATION=местоположение используемого кеша (redis)
+``` 
+- Пример содержимого файла `.env` для запуска сервиса на локальной машине без docker:
 ```
+HOST=название текущего хоста — localhost
+NAME=название базы данных — lms_system_project
+USER=имя текущего пользователя — postgres
+PASSWORD=пароль текущего пользователя — ваш пароль
+
+POSTGRES_USER=имя пользователя — postgres
+POSTGRES_PASSWORD=пароль пользователя — ваш пароль 
+POSTGRES_DB=название базы данных для подключения из docker — db (из docker-compose)
+
+EMAIL_BACKEND=путь импорта Python для вашего класса бэкенда
+EMAIL_HOST=хост SMTP
+EMAIL_HOST_USER=адрес электронной почты для аутентификации на почтовом сервере
+EMAIL_HOST_PASSWORD=пароль для аутентификации на почтовом сервере
+
+STRIPE_API_KEY=API ключ для подключения платежей
+
+LOCATION=местоположение используемого кеша (redis)
+``` 
 - В проекте для работы с платежами используется [stripe](https://stripe.com/docs/api). </br>
 
 # Работа с миграциями
@@ -117,7 +145,7 @@ python manage.py migrate
 
 - Активируйте виртуальное окружение согласно п. `Клонирование репозитория` </br>
 
-- Из  директории `lms_system_project` выполните в консоли: </br>
+- Из директории `lms_system_project` выполните в консоли: </br>
 ```
 python manage.py runserver
 ```  
@@ -125,3 +153,29 @@ python manage.py runserver
 ```
 python3 manage.py runserver
 ```
+
+# Запуск сервера Django c использованием docker
+
+- Установите `docker` согласно инструкции на сайте [docker](https://www.docker.com/get-started/). </br>
+- Скачайте образ `postgres`. Для этого из директории `lms_system_project` выполните в консоли: </br>
+```
+docker pull postgres
+```
+- Создайте пользовательскую сеть для связывания контейнеров. Для этого из директории `lms_system_project` выполните в консоли: </br>
+```
+docker network create my_network
+```
+- Запустите несколько контейнеров с использованием `docker-compose`. Для этого из директории `lms_system_project` выполните в консоли: </br>
+```
+docker-compose up
+```
+
+- В новой открытой сессии сделайте миграции. Для этого из директории `lms_system_project` выполните в консоли: </br>
+```
+docker-compose exec web python manage.py migrate
+```
+- В новой открытой сессии создайте суперпользователя. Для этого из директории `lms_system_project` выполните в консоли: </br>
+```
+docker-compose exec web python manage.py csu
+```
+- Сервис будет доступен по URL `http://127.0.0.1:8000/`
