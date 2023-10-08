@@ -3,7 +3,6 @@ from datetime import datetime, timezone
 from celery import shared_task
 from django.db.models import F
 from django.db.models.functions import ExtractDay
-from django_celery_beat.models import PeriodicTask, CrontabSchedule
 
 from users.models import User
 
@@ -19,18 +18,3 @@ def inactivate_user():
             if not user.is_superuser:
                 user.is_active = False
                 user.save(update_fields=['is_active'])
-
-
-schedule, _ = CrontabSchedule.objects.get_or_create(
-    minute='*',
-    hour='15',
-    day_of_week='*',
-    day_of_month='*',
-    month_of_year='*',
-)
-
-PeriodicTask.objects.get_or_create(
-    crontab=schedule,
-    name='Inactivate users',
-    task='users.tasks.inactivate_user',
-)
