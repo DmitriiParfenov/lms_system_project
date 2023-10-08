@@ -109,7 +109,7 @@ EMAIL_HOST_PASSWORD=пароль для аутентификации на поч
 
 STRIPE_API_KEY=API ключ для подключения платежей
 
-LOCATION=местоположение используемого кеша (redis)
+LOCATION=местоположение используемого кеша (redis://redis:6379)
 ``` 
 - Пример содержимого файла `.env` для запуска сервиса на локальной машине без docker:
 ```
@@ -129,7 +129,7 @@ EMAIL_HOST_PASSWORD=пароль для аутентификации на поч
 
 STRIPE_API_KEY=API ключ для подключения платежей
 
-LOCATION=местоположение используемого кеша (redis)
+LOCATION=местоположение используемого кеша (redis://127.0.0.1:6379)
 ``` 
 - В проекте для работы с платежами используется [stripe](https://stripe.com/docs/api). </br>
 
@@ -154,28 +154,28 @@ python manage.py runserver
 python3 manage.py runserver
 ```
 
-# Запуск сервера Django c использованием docker
+# Запуск сервера Django c использованием docker-compose
 
 - Установите `docker` согласно инструкции на сайте [docker](https://www.docker.com/get-started/). </br>
-- Скачайте образ `postgres`. Для этого из директории `lms_system_project` выполните в консоли: </br>
+- Запустите образ для запуска нескольких контейнеров с использованием `docker-compose`. Для этого из директории `lms_system_project` выполните в консоли: </br>
 ```
-docker pull postgres
+docker-compose build
 ```
-- Создайте пользовательскую сеть для связывания контейнеров. Для этого из директории `lms_system_project` выполните в консоли: </br>
-```
-docker network create my_network
-```
-- Запустите несколько контейнеров с использованием `docker-compose`. Для этого из директории `lms_system_project` выполните в консоли: </br>
+- Запустите собранный образ. Для этого из директории `lms_system_project` выполните в консоли: </br>
 ```
 docker-compose up
 ```
-
-- В новой открытой сессии сделайте миграции. Для этого из директории `lms_system_project` выполните в консоли: </br>
+- Или для запуска образа в фоновом режим из директории `lms_system_project` выполните в консоли: </br>
 ```
-docker-compose exec web python manage.py migrate
+docker-compose up -d
 ```
 - В новой открытой сессии создайте суперпользователя. Для этого из директории `lms_system_project` выполните в консоли: </br>
 ```
 docker-compose exec web python manage.py csu
 ```
-- Сервис будет доступен по URL `http://127.0.0.1:8000/`
+- Сервис будет доступен по URL `http://127.0.0.1:8000/` </br>
+- Для остановки работы образа из директории `lms_system_project` в консоли нажмите `CTRL + C`: </br>
+- Для удаления остановленного образа из директории `lms_system_project` в консоли выполните: </br>
+```
+docker-compose down
+```
